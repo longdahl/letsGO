@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -76,17 +77,9 @@ public class Go extends AppCompatActivity {
 
 
     public void takeATurn(Integer i,ImageButton b) {
-        /*
-        ColorDrawable viewColor = (ColorDrawable) b.getBackground();
 
-        if (viewColor.getColor() == Color.RED || viewColor.getColor() == Color.BLUE){
-            Toast.makeText(getApplicationContext(), "This field has already been crossed off", Toast.LENGTH_SHORT)
-                    .show();
-            return;
-        }
-        */
         try {
-            if (colorDict.get(i) == Color.BLUE || colorDict.get(i) == Color.RED) {
+            if (colorDict.get(i) == R.drawable.black || colorDict.get(i) == R.drawable.white) {
                 Toast.makeText(getApplicationContext(), "This field has already been crossed off", Toast.LENGTH_SHORT)
                         .show();
                 return;
@@ -95,15 +88,19 @@ public class Go extends AppCompatActivity {
                 e.printStackTrace();
         }
         if(player == 1){
-            b.setBackgroundColor(Color.BLUE);
+            b.setImageResource(R.drawable.black);
+            b.setScaleType(ImageView.ScaleType.CENTER);
+            b.setAdjustViewBounds(true);
             player = 2;
-            colorDict.put(i,Color.BLUE);
+            colorDict.put(i,R.drawable.black);
             return;
         }
         else{
-            b.setBackgroundColor(Color.RED);
+            b.setImageResource(R.drawable.white);
+            b.setScaleType(ImageView.ScaleType.CENTER);
+            b.setAdjustViewBounds(true);
             player = 1;
-            colorDict.put(i,Color.RED);
+            colorDict.put(i,R.drawable.white);
         }
 
     }
