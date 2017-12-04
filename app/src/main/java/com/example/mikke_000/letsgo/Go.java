@@ -21,88 +21,52 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Go extends AppCompatActivity {
-
-
-    public int width;
-    public int height;
-    public int player = 1;
-    public int boardsize;
+    private int width;
+    private int height;
+    private int player = 1;
+    private Board board;
     public Map<Integer, Integer> colorDict = new HashMap<Integer, Integer>();
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        boardsize = getIntent().getExtras().getInt("boardS", 0); // send this with intent when you create slider
-
-        GridLayout gridLayout = new GridLayout(this);
-        gridLayout.setColumnCount(boardsize);
-        gridLayout.setRowCount(boardsize);
-
-
-        final ImageButton btnArray[] = new ImageButton[boardsize * boardsize];
-
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();
         height = display.getHeight();
+        int boardSize = getIntent().getExtras().getInt("boardS", 0); // send this with intent when you create slider
 
-        gridLayout.setY((width - height / 2));
+        board = new Board(this, boardSize);
+        GridLayout layout = board.createLayout(this, width);
+        layout.setY((width - height / 2));
 
-        final int btwidth = width / boardsize;
-        int count = 0;
-
-        /*nested loops that loops over the boardsize in 2 dimensions, creates the imagebuttons and
-        sets an onClickListener for each */
-
-        for (int i = 0; i < boardsize; i++) {
-            for (int k = 0; k < boardsize; k++) {
-                btnArray[count] = new ImageButton(this);
-                LinearLayout.LayoutParams linParams = new LinearLayout.LayoutParams(btwidth, btwidth);
-                GridLayout.LayoutParams params = new GridLayout.LayoutParams(linParams);
-                gridLayout.addView(btnArray[count], params);
-                btnArray[count].setPadding(0,0,0,0);
-                btnArray[count].setImageResource(R.drawable.emptyboard);
-                btnArray[count].setScaleType(ImageView.ScaleType.FIT_XY);
-                btnArray[count].setAdjustViewBounds(true);
-
-
-                final int _i = i * boardsize + k;
-                btnArray[count].setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        takeATurn(_i, btnArray[_i]);
-                    }
-                });
-                count += 1;
-            }
-        }
-        setContentView(gridLayout);
-
+        setContentView(layout);
     }
 
-
-    public void takeATurn(Integer i, ImageButton b) {
-
+    public void onButtonClick(int x, int y) {
         try {
-            if (colorDict.get(i) == R.drawable.black || colorDict.get(i) == R.drawable.white) {
-                Toast.makeText(getApplicationContext(), "This field has already been crossed off", Toast.LENGTH_SHORT)
-                        .show();
-                return;
-            }
-        } catch (java.lang.NullPointerException e) {
-            e.printStackTrace();
+            makeMove(x, y, player);
+            player = 3 - player; // toggle between 1 and 2
+        } catch (IllegalArgumentException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT)
+                    .show();
         }
-        if (player == 1) {
-            b.setImageResource(R.drawable.black);
-            player = 2;
-            colorDict.put(i, R.drawable.black);
-            //checkBoard();
-            return;
-        } else {
-            b.setImageResource(R.drawable.white);
-            player = 1;
-            colorDict.put(i, R.drawable.white);
-            //checkBoard();
+    }
+
+    /**
+     * Throws an IllegalArgumentException if the move is illegal
+     * The exception contains a user-friendly error message
+     */
+    public void makeMove(int x, int y, int player) {
+        Cell target = this.board.getCell(x, y);
+        if (target.getPlayer() != 0) { // TODO: replace `0` with constant defined somewhere (e.g. Go.PLAYERS.empty)
+            throw new IllegalArgumentException("This cell has already been played on");
         }
+        if (!this.board.coordinateIsOnBoard(x, y)) {
+            throw new IllegalArgumentException("Cell must be on board");
+        }
+
+        target.setPlayer(player);
+
+        // TODO: implement Go logic
     }
 }

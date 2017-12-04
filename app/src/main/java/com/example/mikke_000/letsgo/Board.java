@@ -1,10 +1,20 @@
 package com.example.mikke_000.letsgo;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.widget.GridLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
 public class Board {
+    private Go game;
     private Cell[][] cells;
     private int size;
 
-    public Board(int size) {
+    public Board(Go game, int size) {
+        this.game = game;
         this.size = size;
         this.cells = new Cell[size][size];
         for (int x = 0; x < size; ++x) {
@@ -14,22 +24,34 @@ public class Board {
         }
     }
 
-    /**
-     * Throws an IllegalArgumentException if the move is illegal
-     * The exception contains a user-friendly error message
-     */
-    public void makeMove(int x, int y, int player) {
-        Cell target = this.getCell(x, y);
-        if (target.getPlayer() != 0) { // TODO: replace `0` with constant defined somewhere (e.g. Go.PLAYERS.empty)
-            throw new IllegalArgumentException("This cell has already been played on");
-        }
-        if (!coordinateIsOnBoard(x, y)) {
-            throw new IllegalArgumentException("Cell must be on board");
+    public GridLayout createLayout(final Context context, int boardWidth) {
+        GridLayout gridLayout = new GridLayout(context);
+        gridLayout.setColumnCount(this.size);
+        gridLayout.setRowCount(this.size);
+
+        int btnSize = boardWidth / this.size;
+
+        // create all the buttons
+        for (int x = 0; x < this.size; ++x) {
+            for (int y = 0; y < this.size; ++y) {
+                final Cell c = this.getCell(x, y);
+                ImageButton btn = c.createButton(context);
+                c.setButton(btn);
+
+                // set the size of the button
+                gridLayout.addView(btn, btnSize, btnSize);
+
+                // add onclick listener
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        game.onButtonClick(c.getX(), c.getY());
+                    }
+                });
+            }
         }
 
-        target.setPlayer(player);
-
-        // TODO: implement Go logic
+        return gridLayout;
     }
 
     public boolean coordinateIsOnBoard(int x, int y) {

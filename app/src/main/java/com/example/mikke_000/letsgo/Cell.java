@@ -1,5 +1,10 @@
 package com.example.mikke_000.letsgo;
 
+import android.content.Context;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+
 import java.util.ArrayList;
 
 /**
@@ -9,6 +14,7 @@ import java.util.ArrayList;
 public class Cell {
     private Board board;
     private int x, y, player;
+    private ImageButton button;
 
     public Cell(Board board, int x, int y) {
         this.board = board;
@@ -21,6 +27,16 @@ public class Cell {
         this.player = player;
         this.x = x;
         this.y = y;
+    }
+
+    public ImageButton createButton(Context context) {
+        ImageButton btn = new ImageButton(context);
+        btn.setPadding(0, 0, 0, 0);
+        btn.setImageResource(R.drawable.emptyboard);
+        btn.setScaleType(ImageView.ScaleType.FIT_XY);
+        btn.setAdjustViewBounds(true);
+
+        return btn;
     }
 
     public Cell[] getNeighbors() {
@@ -46,12 +62,21 @@ public class Cell {
         return neighbors.toArray(new Cell[0]);
     }
 
+    public void setPlayer(int player) {
+        this.player = player;
+        if (this.button != null) {
+            int newBg = player == 1 ? R.drawable.black : R.drawable.white;
+            this.button.setImageResource(newBg);
+        }
+    }
+
     public int getX() { return x; }
     public void setX(int x) { this.x = x; }
     public int getY() { return y; }
     public void setY(int y) { this.y = y; }
     public int getPlayer() { return player; }
-    public void setPlayer(int player) { this.player = player; }
+    public ImageButton getButton() { return this.button; }
+    public void setButton(ImageButton button) { this.button = button; }
     public Board getBoard() { return board; }
     public void setBoard(Board board) { this.board = board; }
 }
