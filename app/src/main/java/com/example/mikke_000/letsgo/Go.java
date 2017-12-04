@@ -26,46 +26,51 @@ public class Go extends AppCompatActivity {
     public int width;
     public int height;
     public int player = 1;
-    public Map<Integer,Integer> colorDict = new HashMap<Integer,Integer>();
+    public int boardsize;
+    public Map<Integer, Integer> colorDict = new HashMap<Integer, Integer>();
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int boardsize = getIntent().getExtras().getInt("boardS",0); // send this with intent when you create slider
+        boardsize = getIntent().getExtras().getInt("boardS", 0); // send this with intent when you create slider
 
-        //LinearLayout layout = new LinearLayout(this);
         GridLayout gridLayout = new GridLayout(this);
         gridLayout.setColumnCount(boardsize);
         gridLayout.setRowCount(boardsize);
 
 
-        final ImageButton btnArray[] = new ImageButton[boardsize*boardsize];
+        final ImageButton btnArray[] = new ImageButton[boardsize * boardsize];
 
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();
         height = display.getHeight();
 
-        gridLayout.setY((width-height/2));
+        gridLayout.setY((width - height / 2));
 
-        final int btwidth = width/boardsize;
+        final int btwidth = width / boardsize;
         int count = 0;
 
         /*nested loops that loops over the boardsize in 2 dimensions, creates the imagebuttons and
         sets an onClickListener for each */
 
-        for(int i=0;i<boardsize;i++){
-            for (int k = 0; k < boardsize; k++){
+        for (int i = 0; i < boardsize; i++) {
+            for (int k = 0; k < boardsize; k++) {
                 btnArray[count] = new ImageButton(this);
-                LinearLayout.LayoutParams linParams = new LinearLayout.LayoutParams(btwidth,btwidth);
+                LinearLayout.LayoutParams linParams = new LinearLayout.LayoutParams(btwidth, btwidth);
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams(linParams);
-                gridLayout.addView(btnArray[count],params);
+                gridLayout.addView(btnArray[count], params);
+                btnArray[count].setPadding(0,0,0,0);
+                btnArray[count].setImageResource(R.drawable.emptyboard);
+                btnArray[count].setScaleType(ImageView.ScaleType.FIT_XY);
+                btnArray[count].setAdjustViewBounds(true);
 
-                final int _i = i*boardsize+k;
+
+                final int _i = i * boardsize + k;
                 btnArray[count].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        takeATurn(_i,btnArray[_i]);
+                        takeATurn(_i, btnArray[_i]);
                     }
                 });
                 count += 1;
@@ -76,7 +81,7 @@ public class Go extends AppCompatActivity {
     }
 
 
-    public void takeATurn(Integer i,ImageButton b) {
+    public void takeATurn(Integer i, ImageButton b) {
 
         try {
             if (colorDict.get(i) == R.drawable.black || colorDict.get(i) == R.drawable.white) {
@@ -84,28 +89,20 @@ public class Go extends AppCompatActivity {
                         .show();
                 return;
             }
-        }catch(java.lang.NullPointerException e){
-                e.printStackTrace();
+        } catch (java.lang.NullPointerException e) {
+            e.printStackTrace();
         }
-        if(player == 1){
+        if (player == 1) {
             b.setImageResource(R.drawable.black);
-            b.setScaleType(ImageView.ScaleType.CENTER);
-            b.setAdjustViewBounds(true);
             player = 2;
-            colorDict.put(i,R.drawable.black);
+            colorDict.put(i, R.drawable.black);
+            //checkBoard();
             return;
-        }
-        else{
+        } else {
             b.setImageResource(R.drawable.white);
-            b.setScaleType(ImageView.ScaleType.CENTER);
-            b.setAdjustViewBounds(true);
             player = 1;
-            colorDict.put(i,R.drawable.white);
+            colorDict.put(i, R.drawable.white);
+            //checkBoard();
         }
-
     }
 }
-
-
-
-
