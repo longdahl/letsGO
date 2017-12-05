@@ -29,16 +29,6 @@ public class Cell {
         this.y = y;
     }
 
-    public ImageButton createButton(Context context) {
-        ImageButton btn = new ImageButton(context);
-        btn.setPadding(0, 0, 0, 0);
-        btn.setImageResource(R.drawable.emptyboard);
-        btn.setScaleType(ImageView.ScaleType.FIT_XY);
-        btn.setAdjustViewBounds(true);
-
-        return btn;
-    }
-
     public Cell[] getNeighbors() {
         int boardSize = this.board.getSize();
         int[][] offsets = new int[][]{
@@ -68,6 +58,16 @@ public class Cell {
             int newBg = player == 1 ? R.drawable.black : R.drawable.white;
             this.button.setImageResource(newBg);
         }
+    }
+
+    public ImageButton createButton(Context context) {
+        ImageButton btn = new ImageButton(context);
+        btn.setPadding(0, 0, 0, 0);
+        btn.setImageResource(R.drawable.emptyboard);
+        btn.setScaleType(ImageView.ScaleType.FIT_XY);
+        btn.setAdjustViewBounds(true);
+
+        return btn;
     }
 
     public int getX() { return x; }

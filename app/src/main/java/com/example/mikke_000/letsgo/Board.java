@@ -24,6 +24,18 @@ public class Board {
         }
     }
 
+    public boolean coordinateIsOnBoard(int x, int y) {
+        return (x >= 0 && x < this.size && y >= 0 && y < this.size);
+    }
+
+    public int getSize() { return size; }
+
+    public Cell getCell(int x, int y) {
+        if (!coordinateIsOnBoard(x, y)) {
+            return null;
+        }
+        return this.cells[x][y];
+    }
     public GridLayout createLayout(final Context context, int boardWidth) {
         GridLayout gridLayout = new GridLayout(context);
         gridLayout.setColumnCount(this.size);
@@ -52,17 +64,5 @@ public class Board {
         }
 
         return gridLayout;
-    }
-
-    public boolean coordinateIsOnBoard(int x, int y) {
-        return (x >= 0 && x < this.size && y >= 0 && y < this.size);
-    }
-
-    public int getSize() { return size; }
-    public Cell getCell(int x, int y) {
-        if (!coordinateIsOnBoard(x, y)) {
-            return null;
-        }
-        return this.cells[x][y];
     }
 }
