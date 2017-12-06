@@ -20,12 +20,18 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Objects.isNull;
+
 public class Go extends AppCompatActivity {
     private int width;
     private int height;
     private int player = 1;
     private Board board;
+    public int boardSize;
+    public int fieldSize;
+    public int fieldPlayer;
     public Map<Integer, Integer> colorDict = new HashMap<Integer, Integer>();
+    public HashMap<Integer, Integer> checkMap = new HashMap<Integer, Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +39,7 @@ public class Go extends AppCompatActivity {
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();
         height = display.getHeight();
-        int boardSize = getIntent().getExtras().getInt("boardS", 0); // send this with intent when you create slider
+        boardSize = getIntent().getExtras().getInt("boardS", 0); // send this with intent when you create slider
 
         board = new Board(this, boardSize);
         GridLayout layout = board.createLayout(this, width);
@@ -68,5 +74,84 @@ public class Go extends AppCompatActivity {
         target.setPlayer(player);
 
         // TODO: implement Go logic
+    }
+
+    public void countBoardScore() {
+        uncheckMap();
+        int SP1 = 0;
+        int SP2 = 0;
+        for (int y = 0; y < boardSize; y++) {
+            for (int x = 0; x < boardSize; x++) {
+                Cell target = this.board.getCell(x, y);
+                int player = target.getPlayer();
+                if (player == 0) {
+                    fieldSize = 0;
+                    fieldPlayer = 0;
+                    searchEmptyField(x, y);
+                    if (fieldPlayer == 1){
+                        SP1 += fieldSize;
+                    }
+                    if (fieldPlayer == 2){
+                        SP2 += fieldSize;
+                    }
+                }
+                else{
+                    /* the following code counts the black and white dots as we traverse the board
+                    it is current commented out while the searchEmptyField function is verified.
+
+                    if (player == 1){
+                        SP1 ´+= 1;
+                    }
+                    if (player == 2){
+                        SP2 += 1;
+                    }
+                     */
+                }
+            }
+        }
+        Toast.makeText(this, "Black: " + Integer.toString(SP1) + " White: " + Integer.toString(SP2), Toast.LENGTH_SHORT)
+                .show();
+    }
+    public void searchEmptyField(int x, int y) {
+        Cell target = this.board.getCell(x, y);
+        int player = target.getPlayer();
+        if (player == 0) { // checks if the field is empty
+            if (checkMap.get(y * boardSize + x) == 0) { // checks if we have seen this field before
+                fieldSize += 1; // the 2 above conditions hold, increment the field size by 1
+                checkMap.put(y * boardSize + x, 1); // declare that we have seen this field
+                /* check fields recursively that have borders touching the current field
+                given that such a field exists within the current board size */
+                if (x + 1 < boardSize) {
+                    searchEmptyField(x + 1, y);
+                }
+                if (x - 1 >= 0) {
+                    searchEmptyField(x - 1, y);
+                }
+                if (y + 1 < boardSize) {
+                    searchEmptyField(x, y + 1);
+                }
+                if (y - 1 >= 0) {
+                    searchEmptyField(x, y - 1);
+                }
+            }
+        }
+        else {
+                /* the following if statements determines which player the fieldsize belongs to*/
+            if (player == fieldPlayer) {
+                // do nothing. reached an edge of the player whom the empty field currently belongs to
+            }
+            if (fieldPlayer == 0) {
+                fieldPlayer = player; // assigns the field to a player
+            }
+            if (fieldPlayer != 0 & player != fieldPlayer) { // this determines that both players have edges that touch the empty space.
+                fieldPlayer = -1; // -1 is assigned to a field that has no value irrespective of its size.
+            }
+        }
+    }
+    public void uncheckMap() {
+        for (int i = 0; i < boardSize * boardSize; i++) {
+            checkMap.put(i, 0);
+        }
+        return;
     }
 }

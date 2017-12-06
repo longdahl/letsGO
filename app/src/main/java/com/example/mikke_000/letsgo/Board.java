@@ -3,6 +3,7 @@ package com.example.mikke_000.letsgo;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -62,7 +63,21 @@ public class Board {
                 });
             }
         }
-
+        /* the following adds the test count button. can be deleted in the finale version */
+        Button countB = new Button(context);
+        countB.setX(boardWidth/2);
+        countB.setY(0);
+        countB.setText("C");
+        gridLayout.addView(countB,btnSize,btnSize);
+        countB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                game.countBoardScore();
+            }
+        });
+        /* end of test button code */
         return gridLayout;
+
     }
+
 }
