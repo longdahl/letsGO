@@ -1,17 +1,16 @@
 package com.example.mikke_000.letsgo;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import java.util.ArrayList;
 
 public class Board {
     private Go game;
     private Cell[][] cells;
+    private ArrayList<Stone> stones;
     private int size;
 
     public Board(Go game, int size) {
@@ -29,14 +28,36 @@ public class Board {
         return (x >= 0 && x < this.size && y >= 0 && y < this.size);
     }
 
-    public int getSize() { return size; }
-
     public Cell getCell(int x, int y) {
         if (!coordinateIsOnBoard(x, y)) {
             return null;
         }
         return this.cells[x][y];
     }
+
+    /**
+     * Gets the stone that contains a given cell.
+     */
+    public Stone getStone(Cell cell) {
+        for (int i = 0; i < this.stones.size(); ++i) {
+            Stone stone = this.stones.get(i);
+            if (stone.contains(cell)) {
+                return stone;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Removes a stone from the board.
+     * Does not actually kill the stone - call `stone.kill()` for that.
+     */
+    public void removeStone(Stone stone) {
+        this.stones.remove(stone);
+    }
+
+    public int getSize() { return size; }
+
     public GridLayout createLayout(final Context context, int boardWidth) {
         GridLayout gridLayout = new GridLayout(context);
         gridLayout.setColumnCount(this.size);

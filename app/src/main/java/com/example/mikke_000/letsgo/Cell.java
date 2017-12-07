@@ -29,6 +29,10 @@ public class Cell {
         this.y = y;
     }
 
+    public boolean isEmpty() {
+        return this.player == 0;
+    }
+
     public Cell[] getNeighbors() {
         int boardSize = this.board.getSize();
         int[][] offsets = new int[][]{

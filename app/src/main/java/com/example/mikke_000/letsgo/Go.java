@@ -80,7 +80,7 @@ public class Go extends AppCompatActivity {
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
         int liberty = 0; // Count liberties
         for (int i=0; i< neighbors.length; ++i){ // Loop Liberties
-            if (neighbors[i].getPlayer() == 0) { // Check for open liberty
+            if (neighbors[i].isEmpty()) { // Check for open liberty
                 ++liberty;
             }
         }
