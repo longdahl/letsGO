@@ -6,12 +6,15 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Board {
     private Go game;
     private Cell[][] cells;
     private ArrayList<Stone> stones;
     private int size;
+
+    public boolean debugging = true; // TODO: disable
 
     public Board(Go game, int size) {
         this.game = game;
@@ -67,6 +70,21 @@ public class Board {
     public ArrayList<Stone> getStones() { return stones; }
     public int getSize() { return size; }
 
+    public void applyDebugColors() {
+        if (this.debugging) {
+            for (int x = 0; x < this.size; ++x) {
+                for (int y = 0; y < this.size; ++y) {
+                    Cell cell = this.getCell(x, y);
+                    Stone stone = this.getStone(cell);
+                    if (stone == null) {
+                        cell.getButton().clearColorFilter();
+                    } else {
+                        cell.getButton().setColorFilter(stone.debugColor);
+                    }
+                }
+            }
+        }
+    }
     public GridLayout createLayout(final Context context, int boardWidth) {
         GridLayout gridLayout = new GridLayout(context);
         gridLayout.setColumnCount(this.size);

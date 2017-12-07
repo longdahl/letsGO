@@ -71,6 +71,8 @@ public class Cell {
         btn.setScaleType(ImageView.ScaleType.FIT_XY);
         btn.setAdjustViewBounds(true);
 
+        this.button = btn;
+
         return btn;
     }
 

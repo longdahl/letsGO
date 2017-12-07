@@ -107,7 +107,7 @@ public class Go extends AppCompatActivity {
             this.board.addStone(stone);
         }
 
-        System.out.println(this.board.getStones().size());
+        this.board.applyDebugColors();
     }
     public boolean checkSuicide(Cell target){
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
