@@ -70,24 +70,45 @@ public class Go extends AppCompatActivity {
         if (!this.board.coordinateIsOnBoard(x, y)) {
             throw new IllegalArgumentException("Cell must be on board");
         }
-        if (checkSuicide(target)){
+        if (checkSuicide(target, player)){
             throw new IllegalArgumentException("Suicide move!");
         }
 
         target.setPlayer(player);
     }
-    public boolean checkSuicide(Cell target){
+
+    /* Prevent suicide move*/
+    public boolean checkSuicide(Cell target, int player){
+        /* True = Suicide move
+           False = Legal move */
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
         int liberty = 0; // Count liberties
-        for (int i=0; i< neighbors.length; ++i){ // Loop Liberties
+        int white = 0;
+        int black = 0;
+        for (int i=0; i< neighbors.length; ++i) { // Loop Liberties
             if (neighbors[i].getPlayer() == 0) { // Check for open liberty
                 ++liberty;
             }
+            if (neighbors[i].getPlayer() == 1) { // Check for black rock
+                ++black;
+            }
+            if (neighbors[i].getPlayer() == 2) { // Check for white rock
+                ++white;
+            }
         }
+        if (white > 0 && black > 0){ // Liberties: 2 white 2 black -> legal move
+            return false;
+        }
+        if (white == 2 && black == 0 && player == 2 ||( black == 2 && white == 0 && player == 1)){
+            return false; // corner of board && liberties: 2 black/white
+        }
+
         if (liberty == 0){
+            if (player == 1 && black == 4) return false;
+            if (player == 2 && white == 4) return false;
             return true; // zero liberties -> suicide move
         }
-        return false; // liberties > 0 -> legal move
+        return false;
     }
 
     public void countBoardScore() {
