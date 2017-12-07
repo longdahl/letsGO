@@ -17,6 +17,7 @@ public class Board {
         this.game = game;
         this.size = size;
         this.cells = new Cell[size][size];
+        this.stones = new ArrayList<>();
         for (int x = 0; x < size; ++x) {
             for (int y = 0; y < size; ++y) {
                 this.cells[x][y] = new Cell(this, x, y);
@@ -49,6 +50,13 @@ public class Board {
     }
 
     /**
+     * Adds a stone to the board
+     */
+    public void addStone(Stone stone) {
+        this.stones.add(stone);
+    }
+
+    /**
      * Removes a stone from the board.
      * Does not actually kill the stone - call `stone.kill()` for that.
      */
@@ -56,6 +64,7 @@ public class Board {
         this.stones.remove(stone);
     }
 
+    public ArrayList<Stone> getStones() { return stones; }
     public int getSize() { return size; }
 
     public GridLayout createLayout(final Context context, int boardWidth) {

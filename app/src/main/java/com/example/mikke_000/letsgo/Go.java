@@ -64,7 +64,7 @@ public class Go extends AppCompatActivity {
      */
     public void makeMove(int x, int y, int player) {
         Cell target = this.board.getCell(x, y);
-        if (target.getPlayer() != 0) { // TODO: replace `0` with constant defined somewhere (e.g. Go.PLAYERS.empty)
+        if (!target.isEmpty()) {
             throw new IllegalArgumentException("This cell has already been played on");
         }
         if (!this.board.coordinateIsOnBoard(x, y)) {
@@ -75,6 +75,39 @@ public class Go extends AppCompatActivity {
         }
 
         target.setPlayer(player);
+
+        // check surrounding stones
+        boolean addedToStone = false;
+        Cell[] neighbors = target.getNeighbors();
+        for (int i = 0; i < neighbors.length; ++i) {
+            Cell neighbor = neighbors[i];
+
+            if (neighbor.isEmpty()) {
+                continue;
+            } else if (neighbor.getPlayer() == player) {
+                // if we found a neighboring stone, we should add the target to that rock
+                // this also handles updating surrounding stones and merging as needed
+                //   (see Stone.add)
+                Stone stone = this.board.getStone(neighbor);
+                stone.add(target);
+                addedToStone = true;
+                break; // rest of the work has been handled above
+            } else {
+                // if we found a neighboring opponent, remove target as a liberty
+                Stone stone = this.board.getStone(neighbor);
+                stone.removeLiberty(target);
+
+                // TODO: kill neighbor if it was last liberty
+            }
+        }
+
+        // if we haven't added the target to a stone, it should become a new stone
+        if (!addedToStone) {
+            Stone stone = new Stone(target);
+            this.board.addStone(stone);
+        }
+
+        System.out.println(this.board.getStones().size());
     }
     public boolean checkSuicide(Cell target){
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
