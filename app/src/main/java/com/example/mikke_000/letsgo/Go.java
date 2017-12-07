@@ -70,10 +70,24 @@ public class Go extends AppCompatActivity {
         if (!this.board.coordinateIsOnBoard(x, y)) {
             throw new IllegalArgumentException("Cell must be on board");
         }
+        if (checkSuicide(target)){
+            throw new IllegalArgumentException("Suicide move!");
+        }
 
         target.setPlayer(player);
-
-        // TODO: implement Go logic
+    }
+    public boolean checkSuicide(Cell target){
+        Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
+        int liberty = 0; // Count liberties
+        for (int i=0; i< neighbors.length; ++i){ // Loop Liberties
+            if (neighbors[i].getPlayer() == 0) { // Check for open liberty
+                ++liberty;
+            }
+        }
+        if (liberty == 0){
+            return true; // zero liberties -> suicide move
+        }
+        return false; // liberties > 0 -> legal move
     }
 
     public void countBoardScore() {
