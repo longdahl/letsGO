@@ -43,36 +43,18 @@ public class Stone {
     /**
      * Adds a cell to the stone.
      * The cell must be owned by the player that owns the stone.
-     *
-     * Handles adding/removing liberties from this and other stones.
-     * Handles merging with new neighboring stones.
+     * *Doesn't* handle interacting with other stones (removing liberties, merging)
      */
     public void add(Cell cell) {
         if (cell.getPlayer() != this.player) {
             throw new IllegalArgumentException("Cannot add cell to stone - not same player");
         }
 
-        // we need to update liberties and merge with neighboring stones
-        Cell[] neighbors = cell.getNeighbors();
-        for (int i = 0; i < neighbors.length; ++i) {
-            Cell neighbor = neighbors[i];
-            // if it's empty, add it as a new liberty
-            if (neighbor.isEmpty()) { this.liberties.add(neighbor); }
-            // if it's non-empty, that stone might have liberties we need to remove
-            // this also handles removing it as a liberty from ourselves
-            else {
-                Stone neighborStone = board.getStone(neighbor);
-                // remove from neighborStones liberties
-                if (neighborStone.hasLiberty(neighbor)) {
-                    neighborStone.removeLiberty(neighbor);
-                }
-                // merge with ourselves if needed
-                if (neighborStone != this && neighborStone.getPlayer() == this.player) {
-                    this.mergeWith(neighborStone);
-                }
-            }
+        // if it was a liberty, remove it
+        if (this.liberties.contains(cell)) {
+            this.liberties.remove(cell);
         }
-        // finally add it to ourselves
+        // also add it to ourselves
         this.cells.add(cell);
     }
 
@@ -85,6 +67,8 @@ public class Stone {
         if (target.getPlayer() != this.player) {
             throw new IllegalArgumentException("Cannot merge stones - not same player");
         }
+
+        if (target == this) { return; }
         
         // merge their stuff into us
         this.cells.addAll(target.getCells());

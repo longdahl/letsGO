@@ -77,7 +77,7 @@ public class Go extends AppCompatActivity {
         target.setPlayer(player);
 
         // check surrounding stones
-        boolean addedToStone = false;
+        Stone containingStone = null;
         Cell[] neighbors = target.getNeighbors();
         for (int i = 0; i < neighbors.length; ++i) {
             Cell neighbor = neighbors[i];
@@ -85,13 +85,17 @@ public class Go extends AppCompatActivity {
             if (neighbor.isEmpty()) {
                 continue;
             } else if (neighbor.getPlayer() == player) {
-                // if we found a neighboring stone, we should add the target to that rock
-                // this also handles updating surrounding stones and merging as needed
-                //   (see Stone.add)
                 Stone stone = this.board.getStone(neighbor);
-                stone.add(target);
-                addedToStone = true;
-                break; // rest of the work has been handled above
+                if (containingStone == null) {
+                    // if we found a neighboring stone, we should add the target to that rock
+                    containingStone = stone;
+                    containingStone.add(target);
+                } else {
+                    // if we've already added the target, and we find another friendly stone,
+                    // we should merge them
+                    stone.removeLiberty(target);
+                    containingStone.mergeWith(stone);
+                }
             } else {
                 // if we found a neighboring opponent, remove target as a liberty
                 Stone stone = this.board.getStone(neighbor);
@@ -102,9 +106,9 @@ public class Go extends AppCompatActivity {
         }
 
         // if we haven't added the target to a stone, it should become a new stone
-        if (!addedToStone) {
-            Stone stone = new Stone(target);
-            this.board.addStone(stone);
+        if (containingStone == null) {
+            containingStone = new Stone(target);
+            this.board.addStone(containingStone);
         }
 
         this.board.applyDebugColors();
