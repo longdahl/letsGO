@@ -70,13 +70,13 @@ public class Go extends AppCompatActivity {
         if (!this.board.coordinateIsOnBoard(x, y)) {
             throw new IllegalArgumentException("Cell must be on board");
         }
-        if (checkSuicide(target)){
+        if (checkSuicide(target)) {
             throw new IllegalArgumentException("Suicide move!");
         }
 
         target.setPlayer(player);
 
-        // check surrounding stones
+
         Stone containingStone = null;
         Cell[] neighbors = target.getNeighbors();
         for (int i = 0; i < neighbors.length; ++i) {
@@ -102,17 +102,26 @@ public class Go extends AppCompatActivity {
                 stone.removeLiberty(target);
 
                 // TODO: kill neighbor if it was last liberty
+                int x_ = neighbor.getX();
+                int y_ = neighbor.getY();
+                uncheckMap();
+                int returnval = inception(x_, y_, player);
+                if (returnval == 1) {
+                    stone.kill();
+                }
             }
         }
 
-        // if we haven't added the target to a stone, it should become a new stone
+            // if we haven't added the target to a stone, it should become a new stone
         if (containingStone == null) {
             containingStone = new Stone(target);
             this.board.addStone(containingStone);
         }
 
         this.board.applyDebugColors();
+
     }
+
     public boolean checkSuicide(Cell target){
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
         int liberty = 0; // Count liberties
@@ -168,7 +177,7 @@ public class Go extends AppCompatActivity {
         int player = target.getPlayer();
         if (player == 0) { // checks if the field is empty
             if (checkMap.get(y * boardSize + x) == 0) { // checks if we have seen this field before
-                fieldSize += 1; // the 2 above conditions hold, increment the field size by 1
+                fieldSize += 1; // if the 2 above conditions hold, increment the field size by 1
                 checkMap.put(y * boardSize + x, 1); // declare that we have seen this field
                 /* check fields recursively that have borders touching the current field
                 given that such a field exists within the current board size */
@@ -205,4 +214,36 @@ public class Go extends AppCompatActivity {
         }
         return;
     }
+
+    public int inception(int x, int y, int player){
+        if (checkMap.get(y * boardSize + x) == 1){
+            return 2; // 2 will denote a previously checked field
+        }
+        checkMap.put(y*boardSize+x,1);
+        Cell target = this.board.getCell(x, y);
+        Cell[] Inceptionneighbors = target.getNeighbors();
+        for (int k = 0; k < Inceptionneighbors.length; ++k) {
+            Cell inceptionneighbor = Inceptionneighbors[k];
+
+            if (inceptionneighbor.isEmpty()) {
+                return 0;
+            }
+            if (inceptionneighbor.getPlayer() == player){
+                // do nothing
+            }
+            else{
+                int x_ = inceptionneighbor.getX();
+                int y_ = inceptionneighbor.getY();
+                int returnval = inception(x_,y_,player);
+                if (returnval == 0) {
+                    return 0;
+                }
+                if (returnval == 2){
+                    continue;
+                }
+            }
+        }
+        return 1;
+    }
+
 }

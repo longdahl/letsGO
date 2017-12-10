@@ -59,7 +59,14 @@ public class Cell {
     public void setPlayer(int player) {
         this.player = player;
         if (this.button != null) {
-            int newBg = player == 1 ? R.drawable.black : R.drawable.white;
+            int newBg = R.drawable.emptyboard;
+            if (player == 1){
+                newBg = R.drawable.black;
+            }
+            else if (player == 2){
+                newBg = R.drawable.white;
+            }
+            //int newBg = player == 1 ? R.drawable.black : R.drawable.white;
             this.button.setImageResource(newBg);
         }
     }
