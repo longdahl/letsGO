@@ -30,6 +30,8 @@ public class Go extends AppCompatActivity {
     public int boardSize;
     public int fieldSize;
     public int fieldPlayer;
+    public int prisWhite;
+    public int prisBlack;
     public Map<Integer, Integer> colorDict = new HashMap<Integer, Integer>();
     public HashMap<Integer, Integer> checkMap = new HashMap<Integer, Integer>();
 
@@ -108,6 +110,7 @@ public class Go extends AppCompatActivity {
                 int returnval = inception(x_, y_, player);
                 if (returnval == 1) {
                     stone.kill();
+                    /* count prisoners for scoring */
                 }
             }
         }
