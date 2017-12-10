@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
@@ -30,8 +31,8 @@ public class Go extends AppCompatActivity {
     public int boardSize;
     public int fieldSize;
     public int fieldPlayer;
-    public int prisWhite;
-    public int prisBlack;
+    public int prisWhite = 0;
+    public int prisBlack = 0;
     public Map<Integer, Integer> colorDict = new HashMap<Integer, Integer>();
     public HashMap<Integer, Integer> checkMap = new HashMap<Integer, Integer>();
 
@@ -103,14 +104,20 @@ public class Go extends AppCompatActivity {
                 Stone stone = this.board.getStone(neighbor);
                 stone.removeLiberty(target);
 
-                // TODO: kill neighbor if it was last liberty
                 int x_ = neighbor.getX();
                 int y_ = neighbor.getY();
                 uncheckMap();
                 int returnval = inception(x_, y_, player);
                 if (returnval == 1) {
+                    int score = stone.getCells().size();
                     stone.kill();
                     /* count prisoners for scoring */
+                    if (player == 1){
+                        prisBlack += score;
+                    }
+                    else{
+                        prisWhite +=score;
+                    }
                 }
             }
         }
