@@ -23,6 +23,13 @@ public class Stone {
         this.player = cell.getPlayer();
         this.board = cell.getBoard();
 
+        Cell[] neighbors = cell.getNeighbors();
+        for (int i = 0; i < neighbors.length; ++i) {
+            if (neighbors[i].isEmpty()) {
+                this.liberties.add(neighbors[i]);
+            }
+        }
+
         this.debugColor = Color.HSVToColor(new float[]{
                 (float) (Math.random()*360), // hue
                 (float) (Math.random() * 0.5 + 0.5), // saturation
