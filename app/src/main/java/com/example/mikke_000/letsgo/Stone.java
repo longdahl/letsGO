@@ -1,12 +1,7 @@
 package com.example.mikke_000.letsgo;
 
 import android.graphics.Color;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Random;
 
 public class Stone {
     private HashSet<Cell> cells;

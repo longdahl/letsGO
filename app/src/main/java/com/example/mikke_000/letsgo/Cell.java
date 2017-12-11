@@ -1,10 +1,8 @@
 package com.example.mikke_000.letsgo;
 
 import android.content.Context;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import java.util.ArrayList;
 
 /**

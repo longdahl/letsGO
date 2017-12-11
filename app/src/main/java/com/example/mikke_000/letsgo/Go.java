@@ -1,26 +1,12 @@
 package com.example.mikke_000.letsgo;
 
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatImageButton;
 import android.view.Display;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.util.Objects.isNull;
 
 public class Go extends AppCompatActivity {
     private int width;

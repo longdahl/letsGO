@@ -7,7 +7,6 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
 
 public class Board {
     private Go game;
