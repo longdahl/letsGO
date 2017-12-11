@@ -83,30 +83,21 @@ public class Go extends AppCompatActivity {
            False = Legal move */
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
         int liberty = 0; // Count liberties
-        int white = 0;
-        int black = 0;
+        int enemy = 0;
+        int own = 0;
         for (int i=0; i< neighbors.length; ++i) { // Loop Liberties
-            if (neighbors[i].getPlayer() == 0) { // Check for open liberty
+            if (neighbors[i].getPlayer() == 0) { // Check for free liberty
                 ++liberty;
             }
-            if (neighbors[i].getPlayer() == 1) { // Check for black rock
-                ++black;
+            if (neighbors[i].getPlayer() == neighbors[i].getPlayer()) { // Check for black rock
+                ++own;
             }
-            if (neighbors[i].getPlayer() == 2) { // Check for white rock
-                ++white;
+            if (neighbors[i].getPlayer() != neighbors[i].getPlayer()) { // Check for white rock
+                ++enemy;
             }
         }
-        if (white > 0 && black > 0){ // Liberties: 2 white 2 black -> legal move
-            return false;
-        }
-        if (white == 2 && black == 0 && player == 2 ||( black == 2 && white == 0 && player == 1)){
-            return false; // corner of board && liberties: 2 black/white
-        }
-
-        if (liberty == 0){
-            if (player == 1 && black == 4) return false;
-            if (player == 2 && white == 4) return false;
-            return true; // zero liberties -> suicide move
+        if ((liberty > 1) || (neighbors.length == own)){ // liberties < 2 or libirties = own stone
+            return false;                                // -> Legal move
         }
         return false;
     }
