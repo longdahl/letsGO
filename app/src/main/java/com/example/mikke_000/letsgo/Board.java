@@ -69,6 +69,7 @@ public class Board {
         Iterator<Cell> cellIterator = stone.getCells().iterator();
         while (cellIterator.hasNext()) {
             Cell cell = cellIterator.next();
+            cell.setPlayer(0);
             Cell[] neighbors = cell.getNeighbors();
             for (int i = 0; i < neighbors.length; ++i) {
                 if (neighbors[i].isEmpty()) { continue; }
@@ -79,8 +80,7 @@ public class Board {
             }
         }
 
-        // set all the stone's cells to 0 and remove it from board
-        stone.kill();
+        this.stones.remove(stone);
     }
 
     public void removeStone(Stone stone) {

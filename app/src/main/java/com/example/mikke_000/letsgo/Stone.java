@@ -94,18 +94,6 @@ public class Stone {
         this.board.removeStone(target);
     }
 
-    /**
-     * Sets all cells to 0. Also removes self from board.
-     * *Doesn't* handle adding cells as liberties to surrounding stones (see Board.killStone)
-     */
-    public void kill() {
-        Iterator<Cell> cellIterator = this.cells.iterator();
-        while (cellIterator.hasNext()) {
-            cellIterator.next().setPlayer(0);
-        }
-        this.board.removeStone(this);
-    }
-
     public int getPlayer() { return player; }
     public HashSet<Cell> getCells() { return cells; }
     public HashSet<Cell> getLiberties() { return liberties; }
