@@ -101,7 +101,10 @@ public class Go extends AppCompatActivity {
                 Stone stone = this.board.getStone(neighbor);
                 stone.removeLiberty(target);
 
-                // TODO: kill neighbor if it was last liberty
+                // kill the stone if it has no liberties left
+                if (stone.getLiberties().size() == 0) {
+                    stone.kill();
+                }
             }
         }
 
