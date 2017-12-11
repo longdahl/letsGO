@@ -96,4 +96,8 @@ public class Cell {
     public void setButton(ImageButton button) { this.button = button; }
     public Board getBoard() { return board; }
     public void setBoard(Board board) { this.board = board; }
+
+    public String toString() {
+        return "Cell("+x+","+y+")["+player+"]";
+    }
 }

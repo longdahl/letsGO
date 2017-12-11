@@ -7,6 +7,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 
 public class Board {
     private Go game;
@@ -61,8 +62,27 @@ public class Board {
 
     /**
      * Removes a stone from the board.
-     * Does not actually kill the stone - call `stone.kill()` for that.
+     * Handles adding the newly empty fields as liberties to surrounding stones
      */
+    public void killStone(Stone stone) {
+        // add cells as liberties to neighboring stones
+        Iterator<Cell> cellIterator = stone.getCells().iterator();
+        while (cellIterator.hasNext()) {
+            Cell cell = cellIterator.next();
+            Cell[] neighbors = cell.getNeighbors();
+            for (int i = 0; i < neighbors.length; ++i) {
+                if (neighbors[i].isEmpty()) { continue; }
+                Stone neighborStone = this.getStone(neighbors[i]);
+                if (neighborStone != stone && neighborStone != null) {
+                    neighborStone.addLiberty(cell);
+                }
+            }
+        }
+
+        // set all the stone's cells to 0 and remove it from board
+        stone.kill();
+    }
+
     public void removeStone(Stone stone) {
         this.stones.remove(stone);
     }
@@ -125,7 +145,6 @@ public class Board {
         });
         /* end of test button code */
         return gridLayout;
-
     }
 
 }

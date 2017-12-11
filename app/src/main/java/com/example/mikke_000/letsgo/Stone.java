@@ -62,6 +62,9 @@ public class Stone {
         this.addLibertiesFromCell(cell);
     }
 
+    public void addLiberty(Cell cell) {
+        this.liberties.add(cell);
+    }
     public void addLibertiesFromCell(Cell cell) {
         Cell[] neighbors = cell.getNeighbors();
         for (int i = 0; i < neighbors.length; ++i) {
@@ -92,8 +95,8 @@ public class Stone {
     }
 
     /**
-     * Kills ourselves.
-     * Also handles removing ourselves from the board.
+     * Sets all cells to 0. Also removes self from board.
+     * *Doesn't* handle adding cells as liberties to surrounding stones (see Board.killStone)
      */
     public void kill() {
         Iterator<Cell> cellIterator = this.cells.iterator();

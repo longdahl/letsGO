@@ -104,7 +104,7 @@ public class Go extends AppCompatActivity {
                 // kill the stone if it has no liberties left
                 if (stone.getLiberties().size() == 0) {
                     // TODO: add stone.getCells().size() to score
-                    stone.kill();
+                    this.board.killStone(stone);
                 }
             }
         }
