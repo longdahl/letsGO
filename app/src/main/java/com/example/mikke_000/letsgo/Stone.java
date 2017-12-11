@@ -23,12 +23,7 @@ public class Stone {
         this.player = cell.getPlayer();
         this.board = cell.getBoard();
 
-        Cell[] neighbors = cell.getNeighbors();
-        for (int i = 0; i < neighbors.length; ++i) {
-            if (neighbors[i].isEmpty()) {
-                this.liberties.add(neighbors[i]);
-            }
-        }
+        this.addLibertiesFromCell(cell);
 
         this.debugColor = Color.HSVToColor(new float[]{
                 (float) (Math.random()*360), // hue
@@ -61,8 +56,19 @@ public class Stone {
         if (this.liberties.contains(cell)) {
             this.liberties.remove(cell);
         }
+
         // also add it to ourselves
         this.cells.add(cell);
+        this.addLibertiesFromCell(cell);
+    }
+
+    public void addLibertiesFromCell(Cell cell) {
+        Cell[] neighbors = cell.getNeighbors();
+        for (int i = 0; i < neighbors.length; ++i) {
+            if (neighbors[i].isEmpty()) {
+                this.liberties.add(neighbors[i]);
+            }
+        }
     }
 
     /**
