@@ -3,6 +3,7 @@ package com.example.mikke_000.letsgo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.View;
 import android.widget.GridLayout;
 import android.widget.Toast;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class Go extends AppCompatActivity {
         boardSize = getIntent().getExtras().getInt("boardS", 0); // send this with intent when you create slider
 
         board = new Board(this, boardSize);
-        GridLayout layout = board.createLayout(this, width);
+        View layout = board.createLayout(this, width);
         layout.setY((width - height / 2));
 
         setContentView(layout);

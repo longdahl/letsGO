@@ -104,10 +104,14 @@ public class Board {
             }
         }
     }
-    public GridLayout createLayout(final Context context, int boardWidth) {
+    public ZoomLayout createLayout(final Context context, int boardWidth) {
+        ZoomLayout zoomLayout = new ZoomLayout(context);
+        zoomLayout.minZoom = 1.0f;
+        zoomLayout.maxZoom = 2.0f;
         GridLayout gridLayout = new GridLayout(context);
         gridLayout.setColumnCount(this.size);
         gridLayout.setRowCount(this.size);
+        zoomLayout.addView(gridLayout);
 
         int btnSize = boardWidth / this.size;
 
@@ -143,7 +147,7 @@ public class Board {
             }
         });
         /* end of test button code */
-        return gridLayout;
+        return zoomLayout;
     }
 
 }
