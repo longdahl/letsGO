@@ -6,7 +6,10 @@ import android.view.Display;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class Go extends AppCompatActivity {
@@ -14,6 +17,7 @@ public class Go extends AppCompatActivity {
     private int height;
     private int player = 1;
     private Board board;
+    private Cell koBlacklist;
     public int boardSize;
     public int fieldSize;
     public int fieldPlayer;
@@ -57,19 +61,27 @@ public class Go extends AppCompatActivity {
         if (!this.board.coordinateIsOnBoard(x, y)) {
             throw new IllegalArgumentException("Cell must be on board");
         }
+        if (this.koBlacklist != null
+                && x == this.koBlacklist.getX()
+                && y == this.koBlacklist.getY()) {
+            throw new IllegalArgumentException("Ko rule");
+        }
         if (checkSuicide(target)){
-            throw new IllegalArgumentException("Suicide move!");
+            // throw new IllegalArgumentException("Suicide move!");
         }
 
         target.setPlayer(player);
 
         // check surrounding stones
         Stone containingStone = null;
+        int ownLiberties = 0;
+        ArrayList<Stone> killedStones = new ArrayList<>();
         Cell[] neighbors = target.getNeighbors();
         for (int i = 0; i < neighbors.length; ++i) {
             Cell neighbor = neighbors[i];
 
             if (neighbor.isEmpty()) {
+                ++ownLiberties;
                 continue;
             } else if (neighbor.getPlayer() == player) {
                 Stone stone = this.board.getStone(neighbor);
@@ -91,6 +103,7 @@ public class Go extends AppCompatActivity {
                 // kill the stone if it has no liberties left
                 if (stone.getLiberties().size() == 0) {
                     // TODO: add stone.getCells().size() to score
+                    killedStones.add(stone);
                     this.board.killStone(stone);
                 }
             }
@@ -100,6 +113,16 @@ public class Go extends AppCompatActivity {
         if (containingStone == null) {
             containingStone = new Stone(target);
             this.board.addStone(containingStone);
+        }
+
+        // if we are at risk of encountering ko rule, block it for next move
+        if (killedStones.size() == 1
+                && killedStones.get(0).getCells().size() == 1
+                && killedStones.get(0).getLiberties().size() == 0
+                && ownLiberties == 0) {
+            Iterator itr = killedStones.get(0).getCells().iterator();
+            Cell killedCell = (Cell) itr.next();
+            this.koBlacklist = killedCell;
         }
 
         this.board.applyDebugColors();
