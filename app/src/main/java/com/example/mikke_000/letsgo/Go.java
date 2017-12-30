@@ -131,6 +131,7 @@ public class Go extends AppCompatActivity {
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
         int liberty = 0; // Count liberties
         for (int i=0; i< neighbors.length; ++i){ // Loop Liberties
+            // TODO: implement using board.getStone(Cell c) and Stone.getLiberties().size()
             if (neighbors[i].isEmpty()) { // Check for open liberty
                 ++liberty;
             }
