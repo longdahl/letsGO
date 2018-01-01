@@ -1,10 +1,8 @@
 package com.example.mikke_000.letsgo;
 
 import android.content.Context;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import java.util.ArrayList;
 
 /**
@@ -59,14 +57,18 @@ public class Cell {
     public void setPlayer(int player) {
         this.player = player;
         if (this.button != null) {
-            int newBg = R.drawable.emptyboard;
-            if (player == 1){
-                newBg = R.drawable.black;
+            int newBg;
+            switch (player) {
+                case 1:
+                    newBg = R.drawable.black;
+                    break;
+                case 2:
+                    newBg = R.drawable.white;
+                    break;
+                default:
+                    newBg = R.drawable.emptyboard;
+                    break;
             }
-            else if (player == 2){
-                newBg = R.drawable.white;
-            }
-            //int newBg = player == 1 ? R.drawable.black : R.drawable.white;
             this.button.setImageResource(newBg);
         }
     }
@@ -92,4 +94,8 @@ public class Cell {
     public void setButton(ImageButton button) { this.button = button; }
     public Board getBoard() { return board; }
     public void setBoard(Board board) { this.board = board; }
+
+    public String toString() {
+        return "Cell("+x+","+y+")["+player+"]";
+    }
 }

@@ -1,12 +1,7 @@
 package com.example.mikke_000.letsgo;
 
 import android.graphics.Color;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Random;
 
 public class Stone {
     private HashSet<Cell> cells;
@@ -22,6 +17,8 @@ public class Stone {
         this.cells.add(cell);
         this.player = cell.getPlayer();
         this.board = cell.getBoard();
+
+        this.addLibertiesFromCell(cell);
 
         this.debugColor = Color.HSVToColor(new float[]{
                 (float) (Math.random()*360), // hue
@@ -54,8 +51,22 @@ public class Stone {
         if (this.liberties.contains(cell)) {
             this.liberties.remove(cell);
         }
+
         // also add it to ourselves
         this.cells.add(cell);
+        this.addLibertiesFromCell(cell);
+    }
+
+    public void addLiberty(Cell cell) {
+        this.liberties.add(cell);
+    }
+    public void addLibertiesFromCell(Cell cell) {
+        Cell[] neighbors = cell.getNeighbors();
+        for (int i = 0; i < neighbors.length; ++i) {
+            if (neighbors[i].isEmpty()) {
+                this.liberties.add(neighbors[i]);
+            }
+        }
     }
 
     /**
@@ -76,18 +87,6 @@ public class Stone {
         
         // remove the stone from the board
         this.board.removeStone(target);
-    }
-
-    /**
-     * Kills ourselves.
-     * Also handles removing ourselves from the board.
-     */
-    public void kill() {
-        Iterator<Cell> cellIterator = this.cells.iterator();
-        while (cellIterator.hasNext()) {
-            cellIterator.next().setPlayer(0);
-        }
-        this.board.removeStone(this);
     }
 
     public int getPlayer() { return player; }

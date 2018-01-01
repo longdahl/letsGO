@@ -1,33 +1,28 @@
 package com.example.mikke_000.letsgo;
 
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatImageButton;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
-
-import static java.util.Objects.isNull;
 
 public class Go extends AppCompatActivity {
     private int width;
     private int height;
     private int player = 1;
     private Board board;
+    private Cell koBlacklist;
     public int boardSize;
     public int fieldSize;
     public int fieldPlayer;
@@ -35,6 +30,15 @@ public class Go extends AppCompatActivity {
     public int prisBlack = 0;
     public Map<Integer, Integer> colorDict = new HashMap<Integer, Integer>();
     public HashMap<Integer, Integer> checkMap = new HashMap<Integer, Integer>();
+    public int[] scores = new int[2];
+
+    private TextView blackScoreView;
+    private TextView whiteScoreView;
+    private ImageView activePlayerView;
+    private ViewGroup gameFieldView;
+    private Button skipTurnView;
+
+    private int numSkips = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,20 +49,98 @@ public class Go extends AppCompatActivity {
         boardSize = getIntent().getExtras().getInt("boardS", 0); // send this with intent when you create slider
 
         board = new Board(this, boardSize);
-        GridLayout layout = board.createLayout(this, width);
-        layout.setY((width - height / 2));
+        setupGui();
+    }
 
-        setContentView(layout);
+    private void setupGui() {
+        setContentView(R.layout.activity_go);
+
+        gameFieldView = findViewById(R.id.gameLayout);
+        activePlayerView = findViewById(R.id.activePlayerImg);
+        whiteScoreView = findViewById(R.id.whiteScore);
+        blackScoreView = findViewById(R.id.blackScore);
+        skipTurnView = findViewById(R.id.skipTurnBtn);
+
+        skipTurnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ++numSkips;
+                if (numSkips >= 2) {
+                    endGame();
+                }
+                togglePlayer();
+            }
+        });
+
+        board.createLayout(this, gameFieldView, width);
+    }
+
+    public void togglePlayer() {
+        player = 3 - player; // toggle between 1 and 2
+        switch (player) {
+            case 1:
+                activePlayerView.setImageResource(R.drawable.black);
+                break;
+            case 2:
+                activePlayerView.setImageResource(R.drawable.white);
+                break;
+        }
     }
 
     public void onButtonClick(int x, int y) {
         try {
             makeMove(x, y, player);
-            player = 3 - player; // toggle between 1 and 2
+            togglePlayer();
         } catch (IllegalArgumentException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT)
                     .show();
         }
+    }
+
+    public void endGame() {
+        countBoardScore();
+
+        String toastStr;
+        if (scores[0] > scores[1]) {
+            toastStr = "Black won with "+scores[0]+" against "+scores[1];
+        } else if (scores[1] > scores[0]) {
+            toastStr = "White won with "+scores[1]+" against "+scores[0];
+        } else {
+            toastStr = "Draw! Both players have "+scores[0]+" point"+(scores[0]==1?"":"s");
+        }
+        Toast.makeText(
+                this,
+                toastStr,
+                Toast.LENGTH_LONG
+        ).show();
+
+        // switch to main activity
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Sets the score of the relevant player, and updates the GUI
+     */
+    public void setScore(int player, int score) {
+        if (player != 1 && player != 2) {
+            throw new IllegalArgumentException("Cannot set score for unknown player "+player);
+        }
+
+        scores[player - 1] = score;
+        TextView scoreView = player == 1 ? blackScoreView : whiteScoreView;
+        scoreView.setText(Integer.toString(score));
+    }
+
+    /**
+     * Adds the score to the players score, and updates the GUI
+     */
+    public void addScore(int player, int scoreDelta) {
+        if (player != 1 && player != 2) {
+            throw new IllegalArgumentException("Cannot set score for unknown player "+player);
+        }
+
+        setScore(player, scores[player - 1] + scoreDelta);
     }
 
     /**
@@ -73,19 +155,30 @@ public class Go extends AppCompatActivity {
         if (!this.board.coordinateIsOnBoard(x, y)) {
             throw new IllegalArgumentException("Cell must be on board");
         }
-        if (checkSuicide(target)) {
-            throw new IllegalArgumentException("Suicide move!");
+        if (this.koBlacklist != null
+                && x == this.koBlacklist.getX()
+                && y == this.koBlacklist.getY()) {
+            throw new IllegalArgumentException("Ko rule");
         }
+        if (checkSuicide(target)){
+            // throw new IllegalArgumentException("Suicide move!");
+        }
+
+        this.koBlacklist = null;
+        this.numSkips = 0;
 
         target.setPlayer(player);
 
 
         Stone containingStone = null;
+        int ownLiberties = 0;
+        ArrayList<Stone> killedStones = new ArrayList<>();
         Cell[] neighbors = target.getNeighbors();
         for (int i = 0; i < neighbors.length; ++i) {
             Cell neighbor = neighbors[i];
 
             if (neighbor.isEmpty()) {
+                ++ownLiberties;
                 continue;
             } else if (neighbor.getPlayer() == player) {
                 Stone stone = this.board.getStone(neighbor);
@@ -104,20 +197,11 @@ public class Go extends AppCompatActivity {
                 Stone stone = this.board.getStone(neighbor);
                 stone.removeLiberty(target);
 
-                int x_ = neighbor.getX();
-                int y_ = neighbor.getY();
-                uncheckMap();
-                int returnval = inception(x_, y_, player);
-                if (returnval == 1) {
-                    int score = stone.getCells().size();
-                    stone.kill();
-                    /* count prisoners for scoring */
-                    if (player == 1){
-                        prisBlack += score;
-                    }
-                    else{
-                        prisWhite +=score;
-                    }
+                // kill the stone if it has no liberties left
+                if (stone.getLiberties().size() == 0) {
+                    addScore(player, stone.getCells().size());
+                    killedStones.add(stone);
+                    this.board.killStone(stone);
                 }
             }
         }
@@ -128,6 +212,16 @@ public class Go extends AppCompatActivity {
             this.board.addStone(containingStone);
         }
 
+        // if we are at risk of encountering ko rule, block it for next move
+        if (killedStones.size() == 1
+                && killedStones.get(0).getCells().size() == 1
+                && killedStones.get(0).getLiberties().size() == 0
+                && ownLiberties == 0) {
+            Iterator itr = killedStones.get(0).getCells().iterator();
+            Cell killedCell = (Cell) itr.next();
+            this.koBlacklist = killedCell;
+        }
+
         this.board.applyDebugColors();
 
     }
@@ -136,6 +230,7 @@ public class Go extends AppCompatActivity {
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
         int liberty = 0; // Count liberties
         for (int i=0; i< neighbors.length; ++i){ // Loop Liberties
+            // TODO: implement using board.getStone(Cell c) and Stone.getLiberties().size()
             if (neighbors[i].isEmpty()) { // Check for open liberty
                 ++liberty;
             }
@@ -179,8 +274,9 @@ public class Go extends AppCompatActivity {
                 }
             }
         }
-        Toast.makeText(this, "Black: " + Integer.toString(SP1) + " White: " + Integer.toString(SP2), Toast.LENGTH_SHORT)
-                .show();
+
+        addScore(1, SP1);
+        addScore(2, SP2);
     }
     public void searchEmptyField(int x, int y) {
         Cell target = this.board.getCell(x, y);
