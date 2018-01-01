@@ -1,5 +1,6 @@
 package com.example.mikke_000.letsgo;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
@@ -103,7 +104,7 @@ public class Go extends AppCompatActivity {
         } else if (scores[1] > scores[0]) {
             toastStr = "White won with "+scores[1]+" against "+scores[0];
         } else {
-            toastStr = "Draw! Both players has "+scores[0]+" points";
+            toastStr = "Draw! Both players have "+scores[0]+" point"+(scores[0]==1?"":"s");
         }
         Toast.makeText(
                 this,
@@ -111,7 +112,9 @@ public class Go extends AppCompatActivity {
                 Toast.LENGTH_LONG
         ).show();
 
-        // TODO: go back to main activity
+        // switch to main activity
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     /**
