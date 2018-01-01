@@ -4,7 +4,143 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mikke_000.letsgo.Go">
+    tools:context="com.example.mikke_000.letsgo.Go"
+    tools:layout_editor_absoluteY="81dp">
 
+
+    <com.example.mikke_000.letsgo.ZoomLayout
+        android:id="@+id/gameLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuideline"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
+        app:layout_constraintStart_toStartOf="@+id/leftGuideline"
+        app:layout_constraintTop_toTopOf="@+id/topGuideline"
+        app:maxZoom="2.0"
+        app:minZoom="1.0">
+
+    </com.example.mikke_000.letsgo.ZoomLayout>
+
+    <ImageView
+        android:id="@+id/activePlayerImg"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:contentDescription="Current player"
+        app:layout_constraintBottom_toTopOf="@+id/topGuideline"
+        app:layout_constraintStart_toEndOf="@+id/scoreTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/black" />
+
+    <ImageView
+        android:id="@+id/blackScoreImg"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="Black score"
+        app:layout_constraintBottom_toBottomOf="@+id/scoreText"
+        app:layout_constraintEnd_toStartOf="@+id/blackScore"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/scoreText"
+        app:layout_constraintTop_toTopOf="@+id/scoreText"
+        app:srcCompat="@drawable/black" />
+
+    <ImageView
+        android:id="@+id/whiteScoreImg"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="White score"
+        app:layout_constraintBottom_toBottomOf="@+id/blackScore"
+        app:layout_constraintEnd_toStartOf="@+id/whiteScore"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/blackScore"
+        app:layout_constraintTop_toTopOf="@+id/blackScore"
+        app:srcCompat="@drawable/white" />
+
+    <TextView
+        android:id="@+id/scoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Current player:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintBottom_toTopOf="@+id/topGuideline"
+        app:layout_constraintStart_toStartOf="@+id/leftGuideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/skipTurnBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Skip turn"
+        app:layout_constraintBottom_toTopOf="@+id/topGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/scoreText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Scores:"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/blackScoreImg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bottomGuideline" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/leftGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/rightGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/topGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="64dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/bottomGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="64dp" />
+
+    <TextView
+        android:id="@+id/whiteScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintBottom_toBottomOf="@+id/whiteScoreImg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/whiteScoreImg"
+        app:layout_constraintTop_toTopOf="@+id/whiteScoreImg" />
+
+    <TextView
+        android:id="@+id/blackScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintBottom_toBottomOf="@+id/blackScoreImg"
+        app:layout_constraintEnd_toStartOf="@+id/whiteScoreImg"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/blackScoreImg"
+        app:layout_constraintTop_toTopOf="@+id/blackScoreImg" />
 
 </android.support.constraint.ConstraintLayout>

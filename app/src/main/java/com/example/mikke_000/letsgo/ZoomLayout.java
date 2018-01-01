@@ -1,7 +1,9 @@
 package com.example.mikke_000.letsgo;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.PointF;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -47,6 +49,24 @@ public class ZoomLayout extends FrameLayout {
     public ZoomLayout(Context context) {
         super(context);
         initialize(context);
+    }
+
+    public ZoomLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initialize(context);
+
+        // https://developer.android.com/training/custom-views/create-view.html
+        TypedArray a = context.getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.ZoomLayout,
+                0, 0
+        );
+        try {
+            this.minZoom = a.getFloat(R.styleable.ZoomLayout_minZoom, this.minZoom);
+            this.maxZoom = a.getFloat(R.styleable.ZoomLayout_maxZoom, this.maxZoom);
+        } finally {
+            a.recycle();
+        }
     }
 
     private void initialize(Context context) {
