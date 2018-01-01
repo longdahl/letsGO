@@ -63,7 +63,7 @@ public class Go extends AppCompatActivity {
             public void onClick(View v) {
                 ++numSkips;
                 if (numSkips >= 2) {
-                    countBoardScore();
+                    endGame();
                 }
                 togglePlayer();
             }
@@ -92,6 +92,26 @@ public class Go extends AppCompatActivity {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT)
                     .show();
         }
+    }
+
+    public void endGame() {
+        countBoardScore();
+
+        String toastStr;
+        if (scores[0] > scores[1]) {
+            toastStr = "Black won with "+scores[0]+" against "+scores[1];
+        } else if (scores[1] > scores[0]) {
+            toastStr = "White won with "+scores[1]+" against "+scores[0];
+        } else {
+            toastStr = "Draw! Both players has "+scores[0]+" points";
+        }
+        Toast.makeText(
+                this,
+                toastStr,
+                Toast.LENGTH_LONG
+        ).show();
+
+        // TODO: go back to main activity
     }
 
     /**
@@ -247,8 +267,9 @@ public class Go extends AppCompatActivity {
                 }
             }
         }
-        Toast.makeText(this, "Black: " + Integer.toString(SP1) + " White: " + Integer.toString(SP2), Toast.LENGTH_SHORT)
-                .show();
+
+        addScore(1, SP1);
+        addScore(2, SP2);
     }
     public void searchEmptyField(int x, int y) {
         Cell target = this.board.getCell(x, y);
