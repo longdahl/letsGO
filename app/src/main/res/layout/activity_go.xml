@@ -28,7 +28,7 @@
         android:layout_height="24dp"
         android:layout_marginStart="16dp"
         android:contentDescription="Current player"
-        app:layout_constraintBottom_toTopOf="@+id/topGuideline"
+        app:layout_constraintBottom_toTopOf="@+id/gameLayout"
         app:layout_constraintStart_toEndOf="@+id/scoreTextView"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/black" />
@@ -64,7 +64,7 @@
         android:layout_marginStart="8dp"
         android:text="Current player:"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        app:layout_constraintBottom_toTopOf="@+id/topGuideline"
+        app:layout_constraintBottom_toTopOf="@+id/gameLayout"
         app:layout_constraintStart_toStartOf="@+id/leftGuideline"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="Skip turn"
-        app:layout_constraintBottom_toTopOf="@+id/topGuideline"
+        app:layout_constraintBottom_toTopOf="@+id/gameLayout"
         app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -89,7 +89,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/blackScoreImg"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/bottomGuideline" />
+        app:layout_constraintTop_toBottomOf="@+id/gameLayout" />
 
     <android.support.constraint.Guideline
         android:id="@+id/leftGuideline"
