@@ -4,7 +4,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,6 +27,15 @@ public class Go extends AppCompatActivity {
     public int fieldPlayer;
     public Map<Integer, Integer> colorDict = new HashMap<Integer, Integer>();
     public HashMap<Integer, Integer> checkMap = new HashMap<Integer, Integer>();
+    public int[] scores = new int[2];
+
+    private TextView blackScoreView;
+    private TextView whiteScoreView;
+    private ImageView activePlayerView;
+    private ViewGroup gameFieldView;
+    private Button skipTurnView;
+
+    private int numSkips = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,20 +46,76 @@ public class Go extends AppCompatActivity {
         boardSize = getIntent().getExtras().getInt("boardS", 0); // send this with intent when you create slider
 
         board = new Board(this, boardSize);
-        View layout = board.createLayout(this, width);
-        layout.setY((width - height / 2));
+        setupGui();
+    }
 
-        setContentView(layout);
+    private void setupGui() {
+        setContentView(R.layout.activity_go);
+
+        gameFieldView = findViewById(R.id.gameLayout);
+        activePlayerView = findViewById(R.id.activePlayerImg);
+        whiteScoreView = findViewById(R.id.whiteScore);
+        blackScoreView = findViewById(R.id.blackScore);
+        skipTurnView = findViewById(R.id.skipTurnBtn);
+
+        skipTurnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ++numSkips;
+                if (numSkips >= 2) {
+                    countBoardScore();
+                }
+                togglePlayer();
+            }
+        });
+
+        board.createLayout(this, gameFieldView, width);
+    }
+
+    public void togglePlayer() {
+        player = 3 - player; // toggle between 1 and 2
+        switch (player) {
+            case 1:
+                activePlayerView.setImageResource(R.drawable.black);
+                break;
+            case 2:
+                activePlayerView.setImageResource(R.drawable.white);
+                break;
+        }
     }
 
     public void onButtonClick(int x, int y) {
         try {
             makeMove(x, y, player);
-            player = 3 - player; // toggle between 1 and 2
+            togglePlayer();
         } catch (IllegalArgumentException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT)
                     .show();
         }
+    }
+
+    /**
+     * Sets the score of the relevant player, and updates the GUI
+     */
+    public void setScore(int player, int score) {
+        if (player != 1 && player != 2) {
+            throw new IllegalArgumentException("Cannot set score for unknown player "+player);
+        }
+
+        scores[player - 1] = score;
+        TextView scoreView = player == 1 ? blackScoreView : whiteScoreView;
+        scoreView.setText(Integer.toString(score));
+    }
+
+    /**
+     * Adds the score to the players score, and updates the GUI
+     */
+    public void addScore(int player, int scoreDelta) {
+        if (player != 1 && player != 2) {
+            throw new IllegalArgumentException("Cannot set score for unknown player "+player);
+        }
+
+        setScore(player, scores[player - 1] + scoreDelta);
     }
 
     /**
@@ -71,6 +140,7 @@ public class Go extends AppCompatActivity {
         }
 
         this.koBlacklist = null;
+        this.numSkips = 0;
 
         target.setPlayer(player);
 
@@ -104,7 +174,7 @@ public class Go extends AppCompatActivity {
 
                 // kill the stone if it has no liberties left
                 if (stone.getLiberties().size() == 0) {
-                    // TODO: add stone.getCells().size() to score
+                    addScore(player, stone.getCells().size());
                     killedStones.add(stone);
                     this.board.killStone(stone);
                 }

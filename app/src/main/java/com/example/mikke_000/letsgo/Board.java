@@ -1,7 +1,9 @@
 package com.example.mikke_000.letsgo;
 
 import android.content.Context;
+import android.text.Layout;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -104,14 +106,12 @@ public class Board {
             }
         }
     }
-    public ZoomLayout createLayout(final Context context, int boardWidth) {
-        ZoomLayout zoomLayout = new ZoomLayout(context);
-        zoomLayout.minZoom = 1.0f;
-        zoomLayout.maxZoom = 2.0f;
+
+    public ViewGroup createLayout(Context context, ViewGroup parent, int boardWidth) {
         GridLayout gridLayout = new GridLayout(context);
         gridLayout.setColumnCount(this.size);
         gridLayout.setRowCount(this.size);
-        zoomLayout.addView(gridLayout);
+        parent.addView(gridLayout);
 
         int btnSize = boardWidth / this.size;
 
@@ -134,19 +134,15 @@ public class Board {
                 });
             }
         }
-        /* the following adds the test count button. can be deleted in the finale version */
-        Button countB = new Button(context);
-        countB.setX(boardWidth/2);
-        countB.setY(0);
-        countB.setText("C");
-        gridLayout.addView(countB,btnSize,btnSize);
-        countB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                game.countBoardScore();
-            }
-        });
-        /* end of test button code */
+
+        return parent;
+    }
+    public ZoomLayout createLayout(final Context context, int boardWidth) {
+        ZoomLayout zoomLayout = new ZoomLayout(context);
+        zoomLayout.minZoom = 1.0f;
+        zoomLayout.maxZoom = 2.0f;
+
+        zoomLayout = (ZoomLayout) this.createLayout(context, zoomLayout, boardWidth);
         return zoomLayout;
     }
 
