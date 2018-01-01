@@ -70,6 +70,8 @@ public class Go extends AppCompatActivity {
             // throw new IllegalArgumentException("Suicide move!");
         }
 
+        this.koBlacklist = null;
+
         target.setPlayer(player);
 
         // check surrounding stones
