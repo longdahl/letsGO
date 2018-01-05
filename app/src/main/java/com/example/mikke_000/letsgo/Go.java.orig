@@ -113,7 +113,11 @@ public class Go extends AppCompatActivity {
 
         this.board.applyDebugColors();
     }
+<<<<<<< HEAD
 
+    /* Prevent suicide move*/
+=======
+>>>>>>> suicide
     public boolean checkSuicide(Cell target, int player){
         /* True = Suicide move
            False = Legal move */
@@ -123,22 +127,38 @@ public class Go extends AppCompatActivity {
         int enemy = 0;
         int own = 0;
         for (int i=0; i< neighbors.length; ++i) { // Loop Liberties
+<<<<<<< HEAD
+            if (neighbors[i].getPlayer() == 0) { // Check for free liberty
+=======
             if (neighbors[i].isEmpty()) { // Check for free liberty/empty cell
+>>>>>>> suicide
                 ++liberty;
-                if (liberty >= 1) return false;
+                if (liberty >= 1 ) return false;
             }
             if (neighbors[i].getPlayer() == player) { // Check for ally
                 ++own;
                 Stone stone = this.board.getStone(neighbors[i]); // Cell is part of stone
-                if (stone.getLiberties().size() > 1) {      // more than 2 liberties =>
-                    return false;                           // legal move
+                if (stone.getLiberties().size() > 1) {
+                    return false;
                 }
             }
             if (neighbors[i].getPlayer() != player) { // Check for opponent
                 ++enemy;
                 if (enemy == neighbors.length) return true;
             }
+            if (neighbors[i].getPlayer() == neighbors[i].getPlayer()) { // Check for black rock
+                ++own;
+            }
+            if (neighbors[i].getPlayer() != neighbors[i].getPlayer()) { // Check for white rock
+                ++enemy;
+            }
         }
+<<<<<<< HEAD
+        if ((liberty > 1) || (neighbors.length == own)){ // liberties < 2 or libirties = own stone
+            return false;                                // -> Legal move
+        }
+=======
+>>>>>>> suicide
         return false;
     }
 
