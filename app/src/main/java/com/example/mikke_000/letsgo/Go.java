@@ -70,7 +70,7 @@ public class Go extends AppCompatActivity {
         if (!this.board.coordinateIsOnBoard(x, y)) {
             throw new IllegalArgumentException("Cell must be on board");
         }
-        if (checkSuicide(target)){
+        if (checkSuicide(target, player)){
             throw new IllegalArgumentException("Suicide move!");
         }
 
@@ -113,18 +113,32 @@ public class Go extends AppCompatActivity {
 
         this.board.applyDebugColors();
     }
-    public boolean checkSuicide(Cell target){
+    public boolean checkSuicide(Cell target, int player){
+        /* True = Suicide move
+           False = Legal move */
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
+        Stone[] stones = new Stone[] {};
         int liberty = 0; // Count liberties
-        for (int i=0; i< neighbors.length; ++i){ // Loop Liberties
-            if (neighbors[i].isEmpty()) { // Check for open liberty
+        int enemy = 0;
+        int own = 0;
+        for (int i=0; i< neighbors.length; ++i) { // Loop Liberties
+            if (neighbors[i].isEmpty()) { // Check for free liberty/empty cell
                 ++liberty;
+                if (liberty >= 1 ) return false;
+            }
+            if (neighbors[i].getPlayer() == player) { // Check for ally
+                ++own;
+                Stone stone = this.board.getStone(neighbors[i]); // Cell is part of stone
+                if (stone.getLiberties().size() > 1) {
+                    return false;
+                }
+            }
+            if (neighbors[i].getPlayer() != player) { // Check for opponent
+                ++enemy;
+                if (enemy == neighbors.length) return true;
             }
         }
-        if (liberty == 0){
-            return true; // zero liberties -> suicide move
-        }
-        return false; // liberties > 0 -> legal move
+        return false;
     }
 
     public void countBoardScore() {
