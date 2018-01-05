@@ -1,23 +1,26 @@
 package com.example.mikke_000.letsgo;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Board {
     private Go game;
     private Cell[][] cells;
+    private ArrayList<Stone> stones;
     private int size;
+
+    public boolean debugging = true; // TODO: disable
 
     public Board(Go game, int size) {
         this.game = game;
         this.size = size;
         this.cells = new Cell[size][size];
+        this.stones = new ArrayList<>();
         for (int x = 0; x < size; ++x) {
             for (int y = 0; y < size; ++y) {
                 this.cells[x][y] = new Cell(this, x, y);
@@ -29,13 +32,58 @@ public class Board {
         return (x >= 0 && x < this.size && y >= 0 && y < this.size);
     }
 
-    public int getSize() { return size; }
-
     public Cell getCell(int x, int y) {
         if (!coordinateIsOnBoard(x, y)) {
             return null;
         }
         return this.cells[x][y];
+    }
+
+    /**
+     * Gets the stone that contains a given cell.
+     */
+    public Stone getStone(Cell cell) {
+        for (int i = 0; i < this.stones.size(); ++i) {
+            Stone stone = this.stones.get(i);
+            if (stone.contains(cell)) {
+                return stone;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Adds a stone to the board
+     */
+    public void addStone(Stone stone) {
+        this.stones.add(stone);
+    }
+
+    /**
+     * Removes a stone from the board.
+     * Does not actually kill the stone - call `stone.kill()` for that.
+     */
+    public void removeStone(Stone stone) {
+        this.stones.remove(stone);
+    }
+
+    public ArrayList<Stone> getStones() { return stones; }
+    public int getSize() { return size; }
+
+    public void applyDebugColors() {
+        if (this.debugging) {
+            for (int x = 0; x < this.size; ++x) {
+                for (int y = 0; y < this.size; ++y) {
+                    Cell cell = this.getCell(x, y);
+                    Stone stone = this.getStone(cell);
+                    if (stone == null) {
+                        cell.getButton().clearColorFilter();
+                    } else {
+                        cell.getButton().setColorFilter(stone.debugColor);
+                    }
+                }
+            }
+        }
     }
     public GridLayout createLayout(final Context context, int boardWidth) {
         GridLayout gridLayout = new GridLayout(context);

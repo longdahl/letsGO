@@ -29,6 +29,10 @@ public class Cell {
         this.y = y;
     }
 
+    public boolean isEmpty() {
+        return this.player == 0;
+    }
+
     public Cell[] getNeighbors() {
         int boardSize = this.board.getSize();
         int[][] offsets = new int[][]{
@@ -66,6 +70,8 @@ public class Cell {
         btn.setImageResource(R.drawable.emptyboard);
         btn.setScaleType(ImageView.ScaleType.FIT_XY);
         btn.setAdjustViewBounds(true);
+
+        this.button = btn;
 
         return btn;
     }

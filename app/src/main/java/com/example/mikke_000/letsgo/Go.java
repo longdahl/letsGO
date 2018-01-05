@@ -64,7 +64,7 @@ public class Go extends AppCompatActivity {
      */
     public void makeMove(int x, int y, int player) {
         Cell target = this.board.getCell(x, y);
-        if (target.getPlayer() != 0) { // TODO: replace `0` with constant defined somewhere (e.g. Go.PLAYERS.empty)
+        if (!target.isEmpty()) {
             throw new IllegalArgumentException("This cell has already been played on");
         }
         if (!this.board.coordinateIsOnBoard(x, y)) {
@@ -75,19 +75,76 @@ public class Go extends AppCompatActivity {
         }
 
         target.setPlayer(player);
+
+        // check surrounding stones
+        Stone containingStone = null;
+        Cell[] neighbors = target.getNeighbors();
+        for (int i = 0; i < neighbors.length; ++i) {
+            Cell neighbor = neighbors[i];
+
+            if (neighbor.isEmpty()) {
+                continue;
+            } else if (neighbor.getPlayer() == player) {
+                Stone stone = this.board.getStone(neighbor);
+                if (containingStone == null) {
+                    // if we found a neighboring stone, we should add the target to that rock
+                    containingStone = stone;
+                    containingStone.add(target);
+                } else {
+                    // if we've already added the target, and we find another friendly stone,
+                    // we should merge them
+                    stone.removeLiberty(target);
+                    containingStone.mergeWith(stone);
+                }
+            } else {
+                // if we found a neighboring opponent, remove target as a liberty
+                Stone stone = this.board.getStone(neighbor);
+                stone.removeLiberty(target);
+
+                // TODO: kill neighbor if it was last liberty
+            }
+        }
+
+        // if we haven't added the target to a stone, it should become a new stone
+        if (containingStone == null) {
+            containingStone = new Stone(target);
+            this.board.addStone(containingStone);
+        }
+
+        this.board.applyDebugColors();
     }
+<<<<<<< HEAD
 
     /* Prevent suicide move*/
+=======
+>>>>>>> suicide
     public boolean checkSuicide(Cell target, int player){
         /* True = Suicide move
            False = Legal move */
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
+        Stone[] stones = new Stone[] {};
         int liberty = 0; // Count liberties
         int enemy = 0;
         int own = 0;
         for (int i=0; i< neighbors.length; ++i) { // Loop Liberties
+<<<<<<< HEAD
             if (neighbors[i].getPlayer() == 0) { // Check for free liberty
+=======
+            if (neighbors[i].isEmpty()) { // Check for free liberty/empty cell
+>>>>>>> suicide
                 ++liberty;
+                if (liberty >= 1 ) return false;
+            }
+            if (neighbors[i].getPlayer() == player) { // Check for ally
+                ++own;
+                Stone stone = this.board.getStone(neighbors[i]); // Cell is part of stone
+                if (stone.getLiberties().size() > 1) {
+                    return false;
+                }
+            }
+            if (neighbors[i].getPlayer() != player) { // Check for opponent
+                ++enemy;
+                if (enemy == neighbors.length) return true;
             }
             if (neighbors[i].getPlayer() == neighbors[i].getPlayer()) { // Check for black rock
                 ++own;
@@ -96,9 +153,12 @@ public class Go extends AppCompatActivity {
                 ++enemy;
             }
         }
+<<<<<<< HEAD
         if ((liberty > 1) || (neighbors.length == own)){ // liberties < 2 or libirties = own stone
             return false;                                // -> Legal move
         }
+=======
+>>>>>>> suicide
         return false;
     }
 
