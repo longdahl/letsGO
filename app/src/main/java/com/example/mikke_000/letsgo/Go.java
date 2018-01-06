@@ -119,16 +119,14 @@ public class Go extends AppCompatActivity {
            False = Legal move */
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
         Stone[] stones = new Stone[] {};
-        int liberty = 0; // Count liberties
+        int liberty = 0;
         int enemy = 0;
-        int own = 0;
         for (int i=0; i< neighbors.length; ++i) { // Loop Liberties
-            if (neighbors[i].isEmpty()) { // Check for free liberty/empty cell
+            if (neighbors[i].isEmpty()) {         // Check for free liberty/empty cell
                 ++liberty;
                 if (liberty >= 1) return false;
             }
             if (neighbors[i].getPlayer() == player) { // Check for ally
-                ++own;
                 Stone stone = this.board.getStone(neighbors[i]); // Cell is part of stone
                 if (stone.getLiberties().size() > 1) {      // more than 2 liberties =>
                     return false;                           // legal move
@@ -138,9 +136,17 @@ public class Go extends AppCompatActivity {
                 ++enemy;
                 if (enemy == neighbors.length) return true;
             }
+
+            // Add if board ^ move => kill
         }
         return false;
     }
+
+
+    public boolean koCheck(Cell target, int player){
+        // Add ko check
+    }
+
 
     public void countBoardScore() {
         uncheckMap();
