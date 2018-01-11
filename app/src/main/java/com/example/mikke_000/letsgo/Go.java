@@ -161,8 +161,8 @@ public class Go extends AppCompatActivity {
                 && y == this.koBlacklist.getY()) {
             throw new IllegalArgumentException("Ko rule");
         }
-        if (checkSuicide(target)){
-            // throw new IllegalArgumentException("Suicide move!");
+        if (checkSuicide(target, player)){
+            throw new IllegalArgumentException("Suicide move!");
         }
 
         this.koBlacklist = null;
@@ -227,20 +227,34 @@ public class Go extends AppCompatActivity {
 
     }
 
-    public boolean checkSuicide(Cell target){
+    public boolean checkSuicide(Cell target, int player){
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
         int liberty = 0; // Count liberties
-        for (int i=0; i< neighbors.length; ++i){ // Loop Liberties
-            // TODO: implement using board.getStone(Cell c) and Stone.getLiberties().size()
-            if (neighbors[i].isEmpty()) { // Check for open liberty
-                ++liberty;
+        int enemy = 0;
+        // TODO: implement using board.getStone(Cell c) and Stone.getLiberties().size()
+        for (int i=0; i< neighbors.length; ++i) { // Loop Liberties
+            if (neighbors[i].isEmpty()) return false;         // Check for free liberty/empty cell
+
+            if (neighbors[i].getPlayer() != player) {       // Check for opponent
+                ++enemy;
+                Stone enemyStone = this.board.getStone(neighbors[i]);
+                if (enemyStone.getLiberties().size() == 1){
+                    return false;
+                }
             }
+            if (neighbors[i].getPlayer() == player) {            // Check for ally
+                Stone stone = this.board.getStone(neighbors[i]); // Cell is part of stone
+                if (stone.getLiberties().size() > 1) {      // more than 2 liberties =>
+                    return false;                           // legal move
+                }
+            }
+            if (enemy == neighbors.length) return true; // only enemy stones & can't do a hail mary
+                                                        // => legal move
+            // Add if board ^ move => kill
         }
-        if (liberty == 0){
-            return true; // zero liberties -> suicide move
-        }
-        return false; // liberties > 0 -> legal move
+        return true;
     }
+
 
     public void countBoardScore() {
         uncheckMap();
