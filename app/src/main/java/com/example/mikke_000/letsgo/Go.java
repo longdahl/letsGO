@@ -49,6 +49,7 @@ public class Go extends AppCompatActivity {
         boardSize = getIntent().getExtras().getInt("boardS", 0); // send this with intent when you create slider
 
         board = new Board(this, boardSize);
+        board.debugging = getIntent().getExtras().getBoolean("debug");
         setupGui();
     }
 

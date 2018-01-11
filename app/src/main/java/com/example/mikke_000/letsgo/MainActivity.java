@@ -5,11 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     public int boardsize = 7;
+    public boolean debugging = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +21,14 @@ public class MainActivity extends AppCompatActivity {
         Button button = (Button) findViewById(R.id.button);
         SeekBar seekBar = (SeekBar)findViewById(R.id.seekBar);
         final TextView tw = (TextView)findViewById(R.id.textView2);
+        CheckBox debugChk = (CheckBox) findViewById(R.id.debugCheckbox);
+
+        debugChk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                debugging = isChecked;
+            }
+        });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -50,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private void goToGo(){
         Intent intent = new Intent(MainActivity.this,Go.class);
         intent.putExtra("boardS",boardsize);
+        intent.putExtra("debug", debugging);
         startActivity(intent);
     }
 }
