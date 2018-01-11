@@ -232,9 +232,14 @@ public class Go extends AppCompatActivity {
         int enemy = 0;
         // TODO: implement using board.getStone(Cell c) and Stone.getLiberties().size()
         for (int i=0; i< neighbors.length; ++i) { // Loop Liberties
-            if (neighbors[i].isEmpty()) {         // Check for free liberty/empty cell
-                ++liberty;
-                if (liberty > 0) return false;    // Has a liberty as neighbor
+            if (neighbors[i].isEmpty()) return false;         // Check for free liberty/empty cell
+
+            if (neighbors[i].getPlayer() != player) {       // Check for opponent
+                ++enemy;
+                Stone enemyStone = this.board.getStone(neighbors[i]);
+                if (enemyStone.getLiberties().size() == 1){
+                    return false;
+                }
             }
             if (neighbors[i].getPlayer() == player) {            // Check for ally
                 Stone stone = this.board.getStone(neighbors[i]); // Cell is part of stone
@@ -242,20 +247,11 @@ public class Go extends AppCompatActivity {
                     return false;                           // legal move
                 }
             }
-            if (neighbors[i].getPlayer() != player) { // Check for opponent
-                ++enemy;
-                if (enemy == neighbors.length) return true; // Surrounded by enemy stones => Suicide
-                if (this.board.getStone(target) != null){
-                    Stone enemyStone = this.board.getStone(neighbors[i]);
-                    if (enemyStone.getLiberties().size() < 2){
-                        return false;
-                    }
-                }
-            }
-
+            if (enemy == neighbors.length) return true; // only enemy stones & can't do a hail mary
+                                                        // => legal move
             // Add if board ^ move => kill
         }
-        return false; // liberties > 0 -> legal move
+        return true;
     }
 
 
