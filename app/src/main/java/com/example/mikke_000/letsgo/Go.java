@@ -160,8 +160,8 @@ public class Go extends AppCompatActivity {
                 && y == this.koBlacklist.getY()) {
             throw new IllegalArgumentException("Ko rule");
         }
-        if (checkSuicide(target)){
-            // throw new IllegalArgumentException("Suicide move!");
+        if (checkSuicide(target, player)){
+            throw new IllegalArgumentException("Suicide move!");
         }
 
         this.koBlacklist = null;
@@ -226,20 +226,38 @@ public class Go extends AppCompatActivity {
 
     }
 
-    public boolean checkSuicide(Cell target){
+    public boolean checkSuicide(Cell target, int player){
         Cell[] neighbors = target.getNeighbors(); // Get array of neighbor cells
         int liberty = 0; // Count liberties
-        for (int i=0; i< neighbors.length; ++i){ // Loop Liberties
-            // TODO: implement using board.getStone(Cell c) and Stone.getLiberties().size()
-            if (neighbors[i].isEmpty()) { // Check for open liberty
+        int enemy = 0;
+        // TODO: implement using board.getStone(Cell c) and Stone.getLiberties().size()
+        for (int i=0; i< neighbors.length; ++i) { // Loop Liberties
+            if (neighbors[i].isEmpty()) {         // Check for free liberty/empty cell
                 ++liberty;
+                if (liberty > 0) return false;    // Has a liberty as neighbor
             }
-        }
-        if (liberty == 0){
-            return true; // zero liberties -> suicide move
+            if (neighbors[i].getPlayer() == player) {            // Check for ally
+                Stone stone = this.board.getStone(neighbors[i]); // Cell is part of stone
+                if (stone.getLiberties().size() > 1) {      // more than 2 liberties =>
+                    return false;                           // legal move
+                }
+            }
+            if (neighbors[i].getPlayer() != player) { // Check for opponent
+                ++enemy;
+                if (enemy == neighbors.length) return true; // Surrounded by enemy stones => Suicide
+                if (this.board.getStone(target) != null){
+                    Stone enemyStone = this.board.getStone(neighbors[i]);
+                    if (enemyStone.getLiberties().size() < 2){
+                        return false;
+                    }
+                }
+            }
+
+            // Add if board ^ move => kill
         }
         return false; // liberties > 0 -> legal move
     }
+
 
     public void countBoardScore() {
         uncheckMap();
